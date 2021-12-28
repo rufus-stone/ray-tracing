@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Misc
+.cache/
+.vscode/
+build/
+*.ppm
