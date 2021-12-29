@@ -12,5 +12,11 @@ int main()
 
   ppm::write_file("test.ppm", example.data(), example.size());
 
+
+  auto v = core::Vec3{1.0, 2.0, 3.0};
+
+  spdlog::info("{}", v);
+
+
   return EXIT_SUCCESS;
 }

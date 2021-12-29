@@ -21,7 +21,7 @@ target_sources(${PROJECT_NAME} PRIVATE src/main.cpp src/ppm.cpp src/vec3.cpp)
 target_include_directories(${PROJECT_NAME}
                            PRIVATE ${PROJECT_SOURCE_DIR}/include)
 
-# We're using C++17 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+# We're using C++17
 set_target_properties(
   ${PROJECT_NAME}
   PROPERTIES CXX_STANDARD 17
@@ -83,3 +83,15 @@ find_package(spdlog REQUIRED)
 
 # Link in the dependenices
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
+
+# +-------+
+# | Tests |
+# +-------+
+
+# Enable testing
+include(CTest)
+message("BUILD_TESTING: ${BUILD_TESTING}")
+if(BUILD_TESTING)
+  enable_testing()
+  add_subdirectory(test)
+endif()

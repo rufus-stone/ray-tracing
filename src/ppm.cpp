@@ -11,8 +11,8 @@ namespace ppm
 
 auto example() -> std::string
 {
-  static constexpr int IMG_WIDTH = 256;
-  static constexpr int IMG_HEIGHT = 256;
+  static constexpr int IMG_WIDTH = 1024;
+  static constexpr int IMG_HEIGHT = 1024;
 
   auto ss = std::stringstream{};
 
@@ -21,6 +21,8 @@ auto example() -> std::string
 
   for (int h = IMG_HEIGHT - 1; h >= 0; h--)
   {
+    std::cerr << "\rScanlines remaining: " << h << ' ' << std::flush;
+
     for (int w = IMG_WIDTH - 1; w >= 0; w--)
     {
       double const r = static_cast<double>(w) / (IMG_WIDTH - 1);
@@ -34,6 +36,8 @@ auto example() -> std::string
       ss << ir << ' ' << ig << ' ' << ib << '\n';
     }
   }
+
+  std::cerr << '\n';
 
   return ss.str();
 }
