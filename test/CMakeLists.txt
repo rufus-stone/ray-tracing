@@ -4,12 +4,21 @@
 
 message(STATUS "Configuring ${PROJECT_NAME}_tests...")
 
-add_executable(${PROJECT_NAME}_tests tests.cpp)
+add_executable(${PROJECT_NAME}_tests "")
 
-# We're using C++17
+# Set source files
+target_sources(
+  ${PROJECT_NAME}_tests PRIVATE tests.cpp ${PROJECT_SOURCE_DIR}/src/ppm.cpp
+                                ${PROJECT_SOURCE_DIR}/src/vec3.cpp)
+
+# Add the include directory to the target
+target_include_directories(${PROJECT_NAME}_tests
+                           PRIVATE ${PROJECT_SOURCE_DIR}/include)
+
+# We're using C++20
 set_target_properties(
-  ${PROJECT_NAME}
-  PROPERTIES CXX_STANDARD 17
+  ${PROJECT_NAME}_tests
+  PROPERTIES CXX_STANDARD 20
              CXX_STANDARD_REQUIRED YES
              CXX_EXTENSIONS NO)
 
@@ -36,4 +45,5 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 
 # Link in the dependenices
-target_link_libraries(${PROJECT_NAME}_tests PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(${PROJECT_NAME}_tests PRIVATE Catch2::Catch2WithMain
+                                                    spdlog::spdlog)

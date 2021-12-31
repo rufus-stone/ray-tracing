@@ -4,6 +4,8 @@
 #include "ppm.hpp"
 #include "vec3.hpp"
 
+#include <iostream>
+
 int main()
 {
   spdlog::info("Oh snap!");
