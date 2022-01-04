@@ -75,9 +75,6 @@ TEST_CASE("Vec3", "[vec3][core]")
   REQUIRE(r5.x() == Catch::Approx(0.267261242));
   REQUIRE(r5.y() == Catch::Approx(0.534522484));
   REQUIRE(r5.z() == Catch::Approx(0.801783726));
-
-  // To string
-  REQUIRE(core::to_string(v4) == "1 1 1");
 }
 
 
@@ -110,4 +107,6 @@ TEST_CASE("Ray", "[ray][core]")
   REQUIRE(p2.x() == Catch::Approx(-0.3));
   REQUIRE(p2.y() == Catch::Approx(72));
   REQUIRE(p2.z() == Catch::Approx(39.2));
+
+  REQUIRE(r1 != r2);
 }

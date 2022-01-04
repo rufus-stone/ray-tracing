@@ -21,11 +21,11 @@ auto example() -> std::string
   ss << "P3\n"
      << IMG_WIDTH << ' ' << IMG_HEIGHT << "\n255\n";
 
-  for (int h = IMG_HEIGHT - 1; h >= 0; h--)
+  for (int h = IMG_HEIGHT - 1; h >= 0; --h)
   {
     std::cerr << "\rScanlines remaining: " << h << ' ' << std::flush;
 
-    for (int w = IMG_WIDTH - 1; w >= 0; w--)
+    for (int w = IMG_WIDTH - 1; w >= 0; --w)
     {
       double const r = static_cast<double>(w) / (IMG_WIDTH - 1);
       double const g = static_cast<double>(h) / (IMG_HEIGHT - 1);
@@ -46,19 +46,19 @@ auto example() -> std::string
 
 auto example_two() -> std::string
 {
-  static constexpr int IMG_WIDTH = 1024;
-  static constexpr int IMG_HEIGHT = 1024;
+  constexpr int IMG_WIDTH = 1024;
+  constexpr int IMG_HEIGHT = 1024;
 
   auto ss = std::stringstream{};
 
   ss << "P3\n"
      << IMG_WIDTH << ' ' << IMG_HEIGHT << "\n255\n";
 
-  for (int h = IMG_HEIGHT - 1; h >= 0; h--)
+  for (int h = IMG_HEIGHT - 1; h >= 0; --h)
   {
     std::cerr << "\rScanlines remaining: " << h << ' ' << std::flush;
 
-    for (int w = IMG_WIDTH - 1; w >= 0; w--)
+    for (int w = IMG_WIDTH - 1; w >= 0; --w)
     {
       double const r = static_cast<double>(w) / (IMG_WIDTH - 1);
       double const g = static_cast<double>(h) / (IMG_HEIGHT - 1);
@@ -66,7 +66,7 @@ auto example_two() -> std::string
 
       auto colour = core::Vec3{r * 256, g * 256, b * 256};
 
-      ss << core::to_string(colour) << '\n';
+      ss << core::colour_to_string(colour) << '\n';
     }
   }
 
