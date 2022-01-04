@@ -1,6 +1,7 @@
 #include <catch2/catch_all.hpp>
 
 #include "vec3.hpp"
+#include "ray.hpp"
 
 
 // +------------+
@@ -56,4 +57,57 @@ TEST_CASE("Vec3", "[vec3][core]")
   REQUIRE(r3.x() == Catch::Approx(0.2));
   REQUIRE(r3.y() == Catch::Approx(0.1818182));
   REQUIRE(r3.z() == Catch::Approx(0.166667));
+
+
+  // Length/Magnitude and unit vector
+  auto v4 = core::Vec3{1, 1, 1};
+  REQUIRE(v4.length_squared() == 3);
+  REQUIRE(v4.length() == Catch::Approx(1.732050808));
+  auto r4 = v4.unit_vector();
+  REQUIRE(r4.x() == Catch::Approx(0.57735));
+  REQUIRE(r4.y() == Catch::Approx(0.57735));
+  REQUIRE(r4.z() == Catch::Approx(0.57735));
+
+  auto v5 = core::Vec3{1, 2, 3};
+  REQUIRE(v5.length_squared() == 14);
+  REQUIRE(v5.length() == Catch::Approx(3.741657387));
+  auto r5 = v5.unit_vector();
+  REQUIRE(r5.x() == Catch::Approx(0.267261242));
+  REQUIRE(r5.y() == Catch::Approx(0.534522484));
+  REQUIRE(r5.z() == Catch::Approx(0.801783726));
+
+  // To string
+  REQUIRE(core::to_string(v4) == "1 1 1");
+}
+
+
+// +-----------+
+// | Ray tests |
+// +-----------+
+
+TEST_CASE("Ray", "[ray][core]")
+{
+  auto r0 = core::Ray{};
+  REQUIRE(r0 == core::Ray{core::Vec3{0.0, 0.0, 0.0}, core::Vec3{0.0, 0.0, 0.0}});
+
+  auto r1_origin = core::Vec3{0, 0, 0};
+  auto r1_direction = core::Vec3{-1, 1, 0};
+  auto r1 = core::Ray{r1_origin, r1_direction};
+
+  REQUIRE(r1.origin() == core::Vec3{0, 0, 0});
+  REQUIRE(r1.direction() == core::Vec3{-1, 1, 0});
+  REQUIRE(r1.at(7) == core::Vec3{-7, 7, 0});
+
+
+  auto r2_origin = core::Vec3{-1, 2, 3.5};
+  auto r2_direction = core::Vec3{0.1, 10, 5.1};
+  auto r2 = core::Ray{r2_origin, r2_direction};
+
+  REQUIRE(r2.origin() == core::Vec3{-1, 2, 3.5});
+  REQUIRE(r2.direction() == core::Vec3{0.1, 10, 5.1});
+
+  auto p2 = r2.at(7);
+  REQUIRE(p2.x() == Catch::Approx(-0.3));
+  REQUIRE(p2.y() == Catch::Approx(72));
+  REQUIRE(p2.z() == Catch::Approx(39.2));
 }

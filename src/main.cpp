@@ -10,7 +10,7 @@ int main()
 {
   spdlog::info("Oh snap!");
 
-  std::string const example = ppm::example();
+  std::string const example = ppm::example_two();
 
   ppm::write_file("test.ppm", example.data(), example.size());
 

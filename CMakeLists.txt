@@ -15,7 +15,8 @@ project(
 add_executable(${PROJECT_NAME})
 
 # Set source files
-target_sources(${PROJECT_NAME} PRIVATE src/main.cpp src/ppm.cpp src/vec3.cpp)
+target_sources(${PROJECT_NAME} PRIVATE src/main.cpp src/ppm.cpp src/vec3.cpp
+                                       src/ray.cpp)
 
 # Add the include directory to the target
 target_include_directories(${PROJECT_NAME}

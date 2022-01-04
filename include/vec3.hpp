@@ -3,7 +3,7 @@
 #include <cmath>
 #include <compare>
 
-#include "spdlog/fmt/ostr.h" // must be included
+#include <spdlog/fmt/ostr.h> // must be included
 
 namespace core
 {
@@ -34,7 +34,7 @@ public:
   double operator[](int i) const;
 
   // Operators
-  auto operator<=>(Vec3 const &) const = default; // Spaceship comparison
+  auto operator<=>(Vec3 const &v) const = default; // Spaceship comparison
 
   Vec3 operator-() const; // Invert
   Vec3 &operator++();     // Pre-increment
@@ -52,15 +52,9 @@ public:
   Vec3 &operator*=(double const t); // Multiply-equals
   Vec3 &operator/=(double const t); // Divide-equals
 
-  double length() const
-  {
-    return std::sqrt(this->length_squared());
-  }
-
-  double length_squared() const
-  {
-    return std::pow(this->m_x, 2) + std::pow(this->m_y, 2) + std::pow(this->m_z, 2);
-  }
+  double length() const;
+  double length_squared() const;
+  Vec3 unit_vector() const;
 };
 
 
@@ -84,5 +78,15 @@ Vec3 operator/(Vec3 const &lhs, Vec3 const &rhs);  // Divide
 Vec3 operator/(Vec3 const &lhs, double const rhs); // Divide
 Vec3 operator/(double const lhs, Vec3 const &rhs); // Divide
 
+double dot(Vec3 const &lhs, Vec3 const &rhs);
+Vec3 cross(Vec3 const &lhs, Vec3 const &rhs);
+
+
+inline std::string to_string(Vec3 const &v)
+{
+  std::string output = std::to_string(static_cast<int>(v.x())) + ' ' + std::to_string(static_cast<int>(v.y())) + ' ' + std::to_string(static_cast<int>(v.z()));
+
+  return output;
+}
 
 } // namespace core
