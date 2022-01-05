@@ -4,7 +4,7 @@
 #include <compare>
 #include <stdexcept> // std::out_of_range
 
-#include <spdlog/fmt/ostr.h> // must be included
+#include <spdlog/fmt/ostr.h> // for spdlog pretty printing, etc.
 
 namespace core
 {

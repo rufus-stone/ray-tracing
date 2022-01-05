@@ -2,7 +2,7 @@
 
 #include "vec3.hpp"
 #include "ray.hpp"
-
+#include "sphere.hpp"
 
 // +------------+
 // | Vec3 tests |
@@ -109,4 +109,36 @@ TEST_CASE("Ray", "[ray][core]")
   REQUIRE(p2.z() == Catch::Approx(39.2));
 
   REQUIRE(r1 != r2);
+}
+
+
+// +--------------+
+// | Sphere tests |
+// +--------------+
+
+TEST_CASE("Sphere", "[sphere][hitrecord][core]")
+{
+  auto const default_sphere = core::Sphere{};
+  REQUIRE(default_sphere.centre() == core::Vec3{0.0, 0.0, 0.0});
+  REQUIRE(default_sphere.radius() == 0.0);
+
+
+  auto const sphere_centre = core::Vec3{0, 0, 0};
+  double const sphere_radius = 2;
+  auto const sphere = core::Sphere{sphere_centre, sphere_radius}; // Sphere centred at 0,0,0 with radius of 2
+
+  auto const ray_origin = core::Vec3{-5, 0, 0};
+  auto const ray_direction = core::Vec3{1, 0, 0};
+  auto const ray = core::Ray{ray_origin, ray_direction}; // A ray originating at -5,0,0 moving in the x axis
+
+  auto hit_record = core::HitRecord{};
+  bool hit = sphere.hit(ray, -10, 10, hit_record); // Does it hit anyway between t == -10 and t == 10 along the ray path?
+  REQUIRE(hit == true);
+
+  auto const expected_hit_point = core::Vec3{-2, 0, 0};
+  auto const expected_normal = core::Vec3{-1, 0, 0};
+  double const expected_t = 3.0;
+  bool const expected_front_face = true;
+  auto const expected = core::HitRecord{expected_hit_point, expected_normal, expected_t, expected_front_face};
+  REQUIRE(hit_record == expected);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vec3.hpp"
+#include "common.hpp"
 
 namespace core
 {
@@ -55,17 +56,17 @@ OStream &operator<<(OStream &os, Ray const &r)
 constexpr double hit_sphere(Vec3 const &sphere_centre, double const sphere_radius, Ray const &ray)
 {
   Vec3 const oc = ray.origin() - sphere_centre;
-  double const a = dot(ray.direction(), ray.direction());
-  double const b = 2.0 * dot(oc, ray.direction());
-  double const c = dot(oc, oc) - (sphere_radius * sphere_radius);
-  double const discriminant = b * b - 4 * a * c; //
+  double const a = ray.direction().length_squared();
+  double const half_b = dot(oc, ray.direction());
+  double const c = oc.length_squared() - (sphere_radius * sphere_radius);
+  double const discriminant = (half_b * half_b) - (a * c);
 
   if (discriminant < 0.0)
   {
     return -1.0;
   } else
   {
-    return (-b - std::sqrt(discriminant)) / (a * 2.0);
+    return (-half_b - std::sqrt(discriminant)) / a;
   }
 }
 

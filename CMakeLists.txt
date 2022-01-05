@@ -14,9 +14,18 @@ project(
 # Create our executable
 add_executable(${PROJECT_NAME})
 
+# Create a variable to hold our source files (so we don't have to copy/paste the
+# source files into the tests CMakeLists.txt)
+set(SOURCE_FILES
+    ${PROJECT_SOURCE_DIR}/src/ppm.cpp
+    ${PROJECT_SOURCE_DIR}/src/vec3.cpp
+    ${PROJECT_SOURCE_DIR}/src/ray.cpp
+    ${PROJECT_SOURCE_DIR}/src/hittable.cpp
+    ${PROJECT_SOURCE_DIR}/src/hittable_list.cpp
+    ${PROJECT_SOURCE_DIR}/src/sphere.cpp)
+
 # Set source files
-target_sources(${PROJECT_NAME} PRIVATE src/main.cpp src/ppm.cpp src/vec3.cpp
-                                       src/ray.cpp)
+target_sources(${PROJECT_NAME} PRIVATE src/main.cpp ${SOURCE_FILES})
 
 # Add the include directory to the target
 target_include_directories(${PROJECT_NAME}

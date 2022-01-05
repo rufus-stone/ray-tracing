@@ -7,10 +7,7 @@ message(STATUS "Configuring ${PROJECT_NAME}_tests...")
 add_executable(${PROJECT_NAME}_tests "")
 
 # Set source files
-target_sources(
-  ${PROJECT_NAME}_tests
-  PRIVATE tests.cpp ${PROJECT_SOURCE_DIR}/src/ppm.cpp
-          ${PROJECT_SOURCE_DIR}/src/vec3.cpp ${PROJECT_SOURCE_DIR}/src/ray.cpp)
+target_sources(${PROJECT_NAME}_tests PRIVATE tests.cpp ${SOURCE_FILES})
 
 # Add the include directory to the target
 target_include_directories(${PROJECT_NAME}_tests

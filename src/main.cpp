@@ -59,7 +59,7 @@ int main()
 
   std::string const rendered = ss.str();
 
-  ppm::write_file("test.ppm", rendered.data(), rendered.size());
+  ppm::write_file("rendered.ppm", rendered.data(), rendered.size());
 
 
   return EXIT_SUCCESS;
