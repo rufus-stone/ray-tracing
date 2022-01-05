@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <compare>
+#include <stdexcept> // std::out_of_range
 
 #include <spdlog/fmt/ostr.h> // must be included
 
@@ -61,11 +62,10 @@ public:
   // Operators
   auto operator<=>(Vec3 const &v) const = default; // Spaceship comparison
 
-  Vec3 operator-() const; // Invert
-  Vec3 &operator++();     // Pre-increment
-  Vec3 operator++(int);   // Post-increment
-  Vec3 &operator--();     // Pre-decrement
-  Vec3 operator--(int);   // Post-decrement
+  Vec3 &operator++();   // Pre-increment
+  Vec3 operator++(int); // Post-increment
+  Vec3 &operator--();   // Pre-decrement
+  Vec3 operator--(int); // Post-decrement
 
   Vec3 &operator+=(Vec3 const &v); // Add-equals
   Vec3 &operator-=(Vec3 const &v); // Subtract-equals
@@ -77,9 +77,65 @@ public:
   Vec3 &operator*=(double const t); // Multiply-equals
   Vec3 &operator/=(double const t); // Divide-equals
 
-  double length() const;
-  double length_squared() const;
-  Vec3 unit_vector() const;
+  constexpr Vec3 operator-() const
+  {
+    return Vec3{-this->x(), -this->y(), -this->z()};
+  }
+
+  constexpr Vec3 operator+(Vec3 const &rhs) const // Add
+  {
+    return Vec3{this->x() + rhs.x(), this->y() + rhs.y(), this->z() + rhs.z()};
+  }
+
+  constexpr Vec3 operator+(double const rhs) const // Add
+  {
+    return Vec3{this->x() + rhs, this->y() + rhs, this->z() + rhs};
+  }
+
+  constexpr Vec3 operator-(Vec3 const &rhs) const // Subtract
+  {
+    return Vec3{this->x() - rhs.x(), this->y() - rhs.y(), this->z() - rhs.z()};
+  }
+
+  constexpr Vec3 operator-(double const rhs) const // Subtract
+  {
+    return Vec3{this->x() - rhs, this->y() - rhs, this->z() - rhs};
+  }
+
+  constexpr Vec3 operator*(Vec3 const &rhs) const // Multiply
+  {
+    return Vec3{this->x() * rhs.x(), this->y() * rhs.y(), this->z() * rhs.z()};
+  }
+
+  constexpr Vec3 operator*(double const rhs) const // Multiply
+  {
+    return Vec3{this->x() * rhs, this->y() * rhs, this->z() * rhs};
+  }
+
+  constexpr Vec3 operator/(Vec3 const &rhs) const // Divide
+  {
+    return Vec3{this->x() / rhs.x(), this->y() / rhs.y(), this->z() / rhs.z()};
+  }
+
+  constexpr Vec3 operator/(double const rhs) const // Divide
+  {
+    return Vec3{this->x() / rhs, this->y() / rhs, this->z() / rhs};
+  }
+
+  constexpr double length() const
+  {
+    return std::sqrt(this->length_squared());
+  }
+
+  constexpr double length_squared() const
+  {
+    return std::pow(this->m_x, 2) + std::pow(this->m_y, 2) + std::pow(this->m_z, 2);
+  }
+
+  constexpr Vec3 unit_vector() const
+  {
+    return *this / this->length();
+  }
 };
 
 
@@ -91,30 +147,9 @@ OStream &operator<<(OStream &os, Vec3 const &v)
 }
 
 
-constexpr Vec3 operator+(Vec3 const &lhs, Vec3 const &rhs) // Add
-{
-  return Vec3{lhs.x() + rhs.x(), lhs.y() + rhs.y(), lhs.z() + rhs.z()};
-}
-
-constexpr Vec3 operator+(Vec3 const &lhs, double const rhs) // Add
-{
-  return Vec3{lhs.x() + rhs, lhs.y() + rhs, lhs.z() + rhs};
-}
-
 constexpr Vec3 operator+(double const lhs, Vec3 const &rhs) // Add
 {
   return Vec3{lhs + rhs.x(), lhs + rhs.y(), lhs + rhs.z()};
-}
-
-
-constexpr Vec3 operator-(Vec3 const &lhs, Vec3 const &rhs) // Subtract
-{
-  return Vec3{lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z()};
-}
-
-constexpr Vec3 operator-(Vec3 const &lhs, double const rhs) // Subtract
-{
-  return Vec3{lhs.x() - rhs, lhs.y() - rhs, lhs.z() - rhs};
 }
 
 constexpr Vec3 operator-(double const lhs, Vec3 const &rhs) // Subtract
@@ -122,31 +157,9 @@ constexpr Vec3 operator-(double const lhs, Vec3 const &rhs) // Subtract
   return Vec3{lhs - rhs.x(), lhs - rhs.y(), lhs - rhs.z()};
 }
 
-
-constexpr Vec3 operator*(Vec3 const &lhs, Vec3 const &rhs) // Multiply
-{
-  return Vec3{lhs.x() * rhs.x(), lhs.y() * rhs.y(), lhs.z() * rhs.z()};
-}
-
-constexpr Vec3 operator*(Vec3 const &lhs, double const rhs) // Multiply
-{
-  return Vec3{lhs.x() * rhs, lhs.y() * rhs, lhs.z() * rhs};
-}
-
 constexpr Vec3 operator*(double const lhs, Vec3 const &rhs) // Multiply
 {
   return Vec3{lhs * rhs.x(), lhs * rhs.y(), lhs * rhs.z()};
-}
-
-
-constexpr Vec3 operator/(Vec3 const &lhs, Vec3 const &rhs) // Divide
-{
-  return Vec3{lhs.x() / rhs.x(), lhs.y() / rhs.y(), lhs.z() / rhs.z()};
-}
-
-constexpr Vec3 operator/(Vec3 const &lhs, double const rhs) // Divide
-{
-  return Vec3{lhs.x() / rhs, lhs.y() / rhs, lhs.z() / rhs};
 }
 
 constexpr Vec3 operator/(double const lhs, Vec3 const &rhs) // Divide

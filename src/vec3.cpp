@@ -1,32 +1,9 @@
 #include "vec3.hpp"
 
-#include <stdexcept> // std::out_of_range
-
 namespace core
 {
 
-
-double Vec3::length() const
-{
-  return std::sqrt(this->length_squared());
-}
-
-double Vec3::length_squared() const
-{
-  return std::pow(this->m_x, 2) + std::pow(this->m_y, 2) + std::pow(this->m_z, 2);
-}
-
-Vec3 Vec3::unit_vector() const
-{
-  return *this / this->length();
-}
-
-
 // Operators
-Vec3 Vec3::operator-() const
-{
-  return Vec3{-this->x(), -this->y(), -this->z()};
-}
 
 Vec3 &Vec3::operator++() // Pre-increment
 {

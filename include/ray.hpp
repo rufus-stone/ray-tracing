@@ -52,32 +52,43 @@ OStream &operator<<(OStream &os, Ray const &r)
 }
 
 /// Check if a ray hits a sphere
-constexpr bool hit_sphere(Vec3 const &sphere_centre, double const sphere_radius, Ray const &ray)
+constexpr double hit_sphere(Vec3 const &sphere_centre, double const sphere_radius, Ray const &ray)
 {
   Vec3 const oc = ray.origin() - sphere_centre;
   double const a = dot(ray.direction(), ray.direction());
   double const b = 2.0 * dot(oc, ray.direction());
   double const c = dot(oc, oc) - (sphere_radius * sphere_radius);
-  double const discriminant = b * b - 4 * a * c;
-  return (discriminant > 0);
+  double const discriminant = b * b - 4 * a * c; //
+
+  if (discriminant < 0.0)
+  {
+    return -1.0;
+  } else
+  {
+    return (-b - std::sqrt(discriminant)) / (a * 2.0);
+  }
 }
 
 
 /// Calculate the colour of the ray
 constexpr Vec3 ray_colour(Ray const &ray)
 {
-  // Check if the ray hit the sphere
+  // Check if the ray hit the sphere, and where it hit
   auto const sphere_origin = Vec3{0, 0, -1};
   double const sphere_radius = 0.5;
-  if (hit_sphere(sphere_origin, sphere_radius, ray))
+  double t = hit_sphere(sphere_origin, sphere_radius, ray);
+
+  if (t > 0.0)
   {
-    auto colour = Vec3{1, 0, 0};
+    Vec3 const N = (ray.at(t) - Vec3{0, 0, -1}).unit_vector();
+
+    Vec3 const colour = 0.5 * Vec3{N.x() + 1, N.y() + 1, N.z() + 1};
     return colour;
   }
 
   Vec3 unit_direction = ray.direction().unit_vector();
 
-  double const t = 0.5 * (unit_direction.y() + 1.0);
+  t = 0.5 * (unit_direction.y() + 1.0);
 
   Vec3 colour = (1.0 - t) * Vec3{1.0, 1.0, 1.0} + (t * Vec3{0.5, 0.7, 1.0});
 
