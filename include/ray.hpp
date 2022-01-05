@@ -1,10 +1,13 @@
 #pragma once
 
+#include "hittable.hpp"
 #include "vec3.hpp"
 #include "common.hpp"
 
 namespace core
 {
+
+class Hittable;
 
 class Ray
 {
@@ -13,32 +16,21 @@ private:
   Vec3 m_direction;
 
 public:
-  Ray() = default;
+  constexpr Ray() = default;
   ~Ray() noexcept = default;
 
   constexpr Ray(Vec3 const &origin, Vec3 const &direction) : m_origin(origin), m_direction(direction) {}
 
-  Ray(Ray const &other) = default;     // copy constructor
-  Ray(Ray &&other) noexcept = default; // move constructor
+  constexpr Ray(Ray const &other) = default;     // copy constructor
+  constexpr Ray(Ray &&other) noexcept = default; // move constructor
 
-  Ray &operator=(Ray const &other) = default;     // copy assignment
-  Ray &operator=(Ray &&other) noexcept = default; // move assignment
+  constexpr Ray &operator=(Ray const &other) = default;     // copy assignment
+  constexpr Ray &operator=(Ray &&other) noexcept = default; // move assignment
 
   // Getters
-  constexpr Vec3 origin() const
-  {
-    return this->m_origin;
-  }
-
-  constexpr Vec3 direction() const
-  {
-    return this->m_direction;
-  }
-
-  constexpr Vec3 at(double t) const
-  {
-    return this->m_origin + (t * this->m_direction);
-  }
+  Vec3 origin() const;
+  Vec3 direction() const;
+  Vec3 at(double t) const;
 
   // Operators
   // auto operator<=>(Ray const &r) const = default; // Spaceship comparison
@@ -53,47 +45,10 @@ OStream &operator<<(OStream &os, Ray const &r)
 }
 
 /// Check if a ray hits a sphere
-constexpr double hit_sphere(Vec3 const &sphere_centre, double const sphere_radius, Ray const &ray)
-{
-  Vec3 const oc = ray.origin() - sphere_centre;
-  double const a = ray.direction().length_squared();
-  double const half_b = dot(oc, ray.direction());
-  double const c = oc.length_squared() - (sphere_radius * sphere_radius);
-  double const discriminant = (half_b * half_b) - (a * c);
-
-  if (discriminant < 0.0)
-  {
-    return -1.0;
-  } else
-  {
-    return (-half_b - std::sqrt(discriminant)) / a;
-  }
-}
-
+double hit_sphere(Vec3 const &sphere_centre, double const sphere_radius, Ray const &ray);
 
 /// Calculate the colour of the ray
-constexpr Vec3 ray_colour(Ray const &ray)
-{
-  // Check if the ray hit the sphere, and where it hit
-  auto const sphere_origin = Vec3{0, 0, -1};
-  double const sphere_radius = 0.5;
-  double t = hit_sphere(sphere_origin, sphere_radius, ray);
+Vec3 ray_colour(Ray const &ray, Hittable const &world);
 
-  if (t > 0.0)
-  {
-    Vec3 const N = (ray.at(t) - Vec3{0, 0, -1}).unit_vector();
-
-    Vec3 const colour = 0.5 * Vec3{N.x() + 1, N.y() + 1, N.z() + 1};
-    return colour;
-  }
-
-  Vec3 unit_direction = ray.direction().unit_vector();
-
-  t = 0.5 * (unit_direction.y() + 1.0);
-
-  Vec3 colour = (1.0 - t) * Vec3{1.0, 1.0, 1.0} + (t * Vec3{0.5, 0.7, 1.0});
-
-  return colour;
-}
 
 } // namespace core

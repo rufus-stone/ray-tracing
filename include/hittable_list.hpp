@@ -11,6 +11,9 @@ namespace core
 
 class HittableList : public Hittable
 {
+private:
+  std::vector<std::shared_ptr<Hittable>> m_hittables;
+
 public:
   HittableList() = default;
   ~HittableList() noexcept = default;
@@ -27,6 +30,7 @@ public:
   HittableList &operator=(HittableList &&other) noexcept = default; // move assignment
 
   auto entries() const -> std::vector<std::shared_ptr<Hittable>>;
+  auto entries() -> std::vector<std::shared_ptr<Hittable>> &;
 
   void clear();
   void push_back(std::shared_ptr<Hittable> hittable);
@@ -50,9 +54,6 @@ public:
 
     return hit_anything;
   }
-
-private:
-  std::vector<std::shared_ptr<Hittable>> m_hittables;
 };
 
 } // namespace core

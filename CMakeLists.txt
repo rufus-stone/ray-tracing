@@ -22,7 +22,8 @@ set(SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/ray.cpp
     ${PROJECT_SOURCE_DIR}/src/hittable.cpp
     ${PROJECT_SOURCE_DIR}/src/hittable_list.cpp
-    ${PROJECT_SOURCE_DIR}/src/sphere.cpp)
+    ${PROJECT_SOURCE_DIR}/src/sphere.cpp
+    ${PROJECT_SOURCE_DIR}/src/camera.cpp)
 
 # Set source files
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp ${SOURCE_FILES})

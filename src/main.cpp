@@ -1,37 +1,38 @@
 #include <cstdlib>
+#include <iostream>
+#include <chrono>
+
 #include <spdlog/spdlog.h>
 
+#include "common.hpp"
+#include "hittable_list.hpp"
 #include "ppm.hpp"
 #include "vec3.hpp"
 #include "ray.hpp"
+#include "sphere.hpp"
+#include "camera.hpp"
 
-#include <iostream>
+using namespace std::chrono_literals;
 
 int main()
 {
+  auto const start = std::chrono::high_resolution_clock::now();
+
   // Image setup
   constexpr double ASPECT_RATIO = 16.0 / 9.0;
   constexpr int IMG_WIDTH = 1024;
   constexpr int IMG_HEIGHT = static_cast<int>(IMG_WIDTH / ASPECT_RATIO);
+  constexpr int SAMPLES_PER_PIXEL = 100; // 100 is sloooww
 
   spdlog::info("Image size: {}x{}", IMG_WIDTH, IMG_HEIGHT);
 
+  // World setup
+  auto world = core::HittableList{};
+  world.push_back(std::make_shared<core::Sphere>(core::Vec3{0, 0, -1}, 0.5));
+  world.push_back(std::make_shared<core::Sphere>(core::Vec3{0, -100.5, -1}, 100));
+
   // Camera setup
-  constexpr double VIEWPORT_HEIGHT = 2.0;
-  constexpr double VIEWPORT_WIDTH = ASPECT_RATIO * VIEWPORT_HEIGHT;
-  constexpr double FOCAL_LENGTH = 1.0;
-
-  spdlog::info("Viewport size: {}x{}", VIEWPORT_HEIGHT, VIEWPORT_WIDTH);
-  spdlog::info("Focal length: {}", FOCAL_LENGTH);
-
-  auto const camera_origin = core::Vec3{};
-  auto const horizontal = core::Vec3{VIEWPORT_WIDTH, 0, 0};
-  auto const vertical = core::Vec3(0, VIEWPORT_HEIGHT, 0);
-  core::Vec3 const lower_left_corner = camera_origin - horizontal / 2 - vertical / 2 - core::Vec3(0, 0, FOCAL_LENGTH);
-
-  spdlog::info("Camera origin: {}", camera_origin);
-  spdlog::info("Lower left corner: {}", lower_left_corner);
-
+  auto camera = core::Camera{};
 
   // Render
   auto ss = std::stringstream{};
@@ -45,13 +46,19 @@ int main()
 
     for (int w = IMG_WIDTH - 1; w >= 0; w--)
     {
-      double const u = static_cast<double>(w) / (IMG_WIDTH - 1);
-      double const v = static_cast<double>(h) / (IMG_HEIGHT - 1);
+      auto pixel_colour = core::Vec3{0, 0, 0};
 
-      auto const ray = core::Ray{camera_origin, lower_left_corner + u * horizontal + v * vertical - camera_origin};
-      auto const pixel_colour = core::ray_colour(ray);
+      for (int s = 0; s < SAMPLES_PER_PIXEL; ++s)
+      {
+        double u = (w + util::random_double()) / (IMG_WIDTH - 1);
+        double v = (h + util::random_double()) / (IMG_HEIGHT - 1);
 
-      ss << core::colour_to_string(pixel_colour) << '\n';
+        auto const ray = camera.get_ray(u, v);
+
+        pixel_colour += core::ray_colour(ray, world);
+      }
+
+      ss << core::colour_to_string(pixel_colour, SAMPLES_PER_PIXEL) << '\n';
     }
   }
 
@@ -61,6 +68,12 @@ int main()
 
   ppm::write_file("rendered.ppm", rendered.data(), rendered.size());
 
+
+  auto const finish = std::chrono::high_resolution_clock::now();
+  auto const nanoseconds_taken = (finish - start);
+  auto const seconds_taken = std::chrono::duration<double, std::ratio<1>>(nanoseconds_taken).count();
+
+  spdlog::info("Rendered in {:.0f} seconds ({:0.2f} minutes)", seconds_taken, seconds_taken / 60);
 
   return EXIT_SUCCESS;
 }

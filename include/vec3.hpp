@@ -2,7 +2,7 @@
 
 #include <cmath>
 #include <compare>
-#include <stdexcept> // std::out_of_range
+#include <algorithm> // std::clamp
 
 #include <spdlog/fmt/ostr.h> // for spdlog pretty printing, etc.
 
@@ -17,50 +17,31 @@ private:
   double m_z = 0.0;
 
 public:
-  Vec3() = default;
+  constexpr Vec3() = default;
   ~Vec3() noexcept = default;
 
   constexpr Vec3(double x, double y, double z) : m_x(x), m_y(y), m_z(z) {}
 
-  Vec3(Vec3 const &other) = default;     // copy constructor
-  Vec3(Vec3 &&other) noexcept = default; // move constructor
+  constexpr Vec3(Vec3 const &other) = default;     // copy constructor
+  constexpr Vec3(Vec3 &&other) noexcept = default; // move constructor
 
-  Vec3 &operator=(Vec3 const &other) = default;     // copy assignment
-  Vec3 &operator=(Vec3 &&other) noexcept = default; // move assignment
+  constexpr Vec3 &operator=(Vec3 const &other) = default;     // copy assignment
+  constexpr Vec3 &operator=(Vec3 &&other) noexcept = default; // move assignment
 
   // Getters
-  constexpr double x() const
-  {
-    return this->m_x;
-  }
+  double x() const;
+  double y() const;
+  double z() const;
+  double operator[](int i) const;
 
-  constexpr double y() const
-  {
-    return this->m_y;
-  }
-
-  constexpr double z() const
-  {
-    return this->m_z;
-  }
-
-  constexpr double operator[](int i) const
-  {
-    switch (i)
-    {
-      case 0:
-        return this->m_x;
-      case 1:
-        return this->m_y;
-      case 2:
-        return this->m_z;
-      default:
-        throw std::out_of_range("Vec3::operator[] : index is out of range");
-    }
-  }
+  double length() const;
+  double length_squared() const;
+  Vec3 unit_vector() const;
 
   // Operators
   auto operator<=>(Vec3 const &v) const = default; // Spaceship comparison
+
+  Vec3 operator-() const;
 
   Vec3 &operator++();   // Pre-increment
   Vec3 operator++(int); // Post-increment
@@ -76,66 +57,6 @@ public:
   Vec3 &operator-=(double const t); // Subtract-equals
   Vec3 &operator*=(double const t); // Multiply-equals
   Vec3 &operator/=(double const t); // Divide-equals
-
-  constexpr Vec3 operator-() const
-  {
-    return Vec3{-this->x(), -this->y(), -this->z()};
-  }
-
-  constexpr Vec3 operator+(Vec3 const &rhs) const // Add
-  {
-    return Vec3{this->x() + rhs.x(), this->y() + rhs.y(), this->z() + rhs.z()};
-  }
-
-  constexpr Vec3 operator+(double const rhs) const // Add
-  {
-    return Vec3{this->x() + rhs, this->y() + rhs, this->z() + rhs};
-  }
-
-  constexpr Vec3 operator-(Vec3 const &rhs) const // Subtract
-  {
-    return Vec3{this->x() - rhs.x(), this->y() - rhs.y(), this->z() - rhs.z()};
-  }
-
-  constexpr Vec3 operator-(double const rhs) const // Subtract
-  {
-    return Vec3{this->x() - rhs, this->y() - rhs, this->z() - rhs};
-  }
-
-  constexpr Vec3 operator*(Vec3 const &rhs) const // Multiply
-  {
-    return Vec3{this->x() * rhs.x(), this->y() * rhs.y(), this->z() * rhs.z()};
-  }
-
-  constexpr Vec3 operator*(double const rhs) const // Multiply
-  {
-    return Vec3{this->x() * rhs, this->y() * rhs, this->z() * rhs};
-  }
-
-  constexpr Vec3 operator/(Vec3 const &rhs) const // Divide
-  {
-    return Vec3{this->x() / rhs.x(), this->y() / rhs.y(), this->z() / rhs.z()};
-  }
-
-  constexpr Vec3 operator/(double const rhs) const // Divide
-  {
-    return Vec3{this->x() / rhs, this->y() / rhs, this->z() / rhs};
-  }
-
-  constexpr double length() const
-  {
-    return std::sqrt(this->length_squared());
-  }
-
-  constexpr double length_squared() const
-  {
-    return std::pow(this->m_x, 2) + std::pow(this->m_y, 2) + std::pow(this->m_z, 2);
-  }
-
-  constexpr Vec3 unit_vector() const
-  {
-    return *this / this->length();
-  }
 };
 
 
@@ -146,44 +67,41 @@ OStream &operator<<(OStream &os, Vec3 const &v)
   return os << "Vec3 { x: " << v.x() << ", y: " << v.y() << ", z: " << v.z() << " }";
 }
 
+Vec3 operator+(Vec3 const &lhs, Vec3 const &rhs);  // Add
+Vec3 operator+(Vec3 const &lhs, double const rhs); // Add
+Vec3 operator+(double const lhs, Vec3 const &rhs); // Add
 
-constexpr Vec3 operator+(double const lhs, Vec3 const &rhs) // Add
+Vec3 operator-(double const lhs, Vec3 const &rhs); // Subtract
+Vec3 operator-(Vec3 const &lhs, Vec3 const &rhs);  // Subtract
+Vec3 operator-(Vec3 const &lhs, double const rhs); // Subtract
+
+Vec3 operator*(double const lhs, Vec3 const &rhs); // Multiply
+Vec3 operator*(Vec3 const &lhs, Vec3 const &rhs);  // Multiply
+Vec3 operator*(Vec3 const &lhs, double const rhs); // Multiply
+
+Vec3 operator/(double const lhs, Vec3 const &rhs); // Divide
+Vec3 operator/(Vec3 const &lhs, Vec3 const &rhs);  // Divide
+Vec3 operator/(Vec3 const &lhs, double const rhs); // Divide
+
+
+double dot(Vec3 const &lhs, Vec3 const &rhs);
+Vec3 cross(Vec3 const &lhs, Vec3 const &rhs);
+
+
+inline std::string colour_to_string(Vec3 const &v, int const samples_per_pixel)
 {
-  return Vec3{lhs + rhs.x(), lhs + rhs.y(), lhs + rhs.z()};
-}
+  // Divide the colour by the number of samples
+  double const scale = 1.0 / samples_per_pixel;
 
-constexpr Vec3 operator-(double const lhs, Vec3 const &rhs) // Subtract
-{
-  return Vec3{lhs - rhs.x(), lhs - rhs.y(), lhs - rhs.z()};
-}
+  double const r = v.x() * scale;
+  double const g = v.y() * scale;
+  double const b = v.z() * scale;
 
-constexpr Vec3 operator*(double const lhs, Vec3 const &rhs) // Multiply
-{
-  return Vec3{lhs * rhs.x(), lhs * rhs.y(), lhs * rhs.z()};
-}
+  int const red = static_cast<int>(std::clamp(r, 0.0, 0.999) * 256);
+  int const green = static_cast<int>(std::clamp(g, 0.0, 0.999) * 256);
+  int const blue = static_cast<int>(std::clamp(b, 0.0, 0.999) * 256);
 
-constexpr Vec3 operator/(double const lhs, Vec3 const &rhs) // Divide
-{
-  return Vec3{lhs / rhs.x(), lhs / rhs.y(), lhs / rhs.z()};
-}
-
-
-constexpr double dot(Vec3 const &lhs, Vec3 const &rhs)
-{
-  return (lhs.x() * rhs.x()) + (lhs.y() * rhs.y()) + (lhs.z() * rhs.z());
-}
-
-constexpr Vec3 cross(Vec3 const &lhs, Vec3 const &rhs)
-{
-  return Vec3{(lhs.y() * rhs.z()) - (lhs.z() * rhs.y()),
-    (lhs.z() * rhs.x()) - (lhs.x() * rhs.z()),
-    (lhs.x() * rhs.y()) - (lhs.y() * rhs.x())};
-}
-
-
-inline std::string colour_to_string(Vec3 const &v)
-{
-  std::string output = std::to_string(static_cast<int>(v.x() * 256)) + ' ' + std::to_string(static_cast<int>(v.y() * 256)) + ' ' + std::to_string(static_cast<int>(v.z() * 256));
+  std::string output = std::to_string(red) + ' ' + std::to_string(green) + ' ' + std::to_string(blue);
 
   return output;
 }

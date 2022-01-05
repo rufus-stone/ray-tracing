@@ -10,6 +10,10 @@ namespace core
 
 class Sphere : public Hittable
 {
+private:
+  Vec3 m_centre_point;
+  double m_radius = 0.0;
+
 public:
   constexpr Sphere() = default;
   ~Sphere() noexcept = default;
@@ -24,18 +28,18 @@ public:
 
 
   // Getters
-  constexpr Vec3 const &centre() const
+  Vec3 const &centre() const
   {
     return this->m_centre_point;
   }
 
-  constexpr double radius() const
+  double radius() const
   {
     return this->m_radius;
   }
 
 
-  virtual constexpr bool hit(Ray const &ray, double const t_min, double const t_max, HitRecord &hit_record) const override
+  virtual bool hit(Ray const &ray, double const t_min, double const t_max, HitRecord &hit_record) const override
   {
     Vec3 const oc = ray.origin() - this->m_centre_point;
     double const a = ray.direction().length_squared();
@@ -72,10 +76,6 @@ public:
 
     return true;
   }
-
-private:
-  Vec3 m_centre_point;
-  double m_radius = 0.0;
 };
 
 } // namespace core

@@ -8,6 +8,8 @@
 namespace core
 {
 
+class Ray;
+
 struct HitRecord
 {
   Vec3 point;
@@ -15,11 +17,7 @@ struct HitRecord
   double t;
   bool front_face;
 
-  constexpr void set_face_normal(Ray const &ray, Vec3 const &outward_normal)
-  {
-    this->front_face = dot(ray.direction(), outward_normal) < 0;
-    this->normal = front_face ? outward_normal : -outward_normal;
-  }
+  void set_face_normal(Ray const &ray, Vec3 const &outward_normal);
 
   auto operator<=>(HitRecord const &h) const = default; // Spaceship comparison
 };
@@ -36,7 +34,7 @@ OStream &operator<<(OStream &os, HitRecord const &h)
 class Hittable
 {
 public:
-  virtual constexpr bool hit(Ray const &ray, double const t_min, double const t_max, HitRecord &hit_record) const = 0;
+  virtual bool hit(Ray const &ray, double const t_min, double const t_max, HitRecord &hit_record) const = 0;
 };
 
 } // namespace core

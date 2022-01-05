@@ -1,6 +1,8 @@
 #pragma once
 
 #include <limits>
+#include <random>
+#include <type_traits>
 
 namespace constants
 {
@@ -17,6 +19,15 @@ namespace util
 constexpr double degrees_to_radians(double const degrees)
 {
   return (degrees * constants::pi) / 180;
+}
+
+
+inline double random_double()
+{
+  auto random_engine = std::mt19937{std::random_device{}()};
+
+  std::uniform_real_distribution<double> distribution(0.0, 1.0);
+  return distribution(random_engine);
 }
 
 } // namespace util
