@@ -38,14 +38,21 @@ double hit_sphere(Vec3 const &sphere_centre, double const sphere_radius, Ray con
 }
 
 /// Calculate the colour of the ray
-Vec3 ray_colour(Ray const &ray, Hittable const &world)
+Vec3 ray_colour(Ray const &ray, Hittable const &world, std::size_t const max_depth)
 {
   auto hit_record = HitRecord{};
 
-  // Check if the ray hit anything in the world at any point
-  if (world.hit(ray, 0, constants::infinity, hit_record))
+  // Stop if we've exceeded the ray bounce limit and return a black pixel
+  if (max_depth < 1)
   {
-    return 0.5 * (hit_record.normal + Vec3{1, 1, 1});
+    return Vec3{0, 0, 0};
+  }
+
+  // Check if the ray hit anything in the world at any point, accounting for "shadow acne"
+  if (world.hit(ray, 0.001, constants::infinity, hit_record))
+  {
+    Vec3 const target = hit_record.point + hit_record.normal + Vec3::random_in_unit_sphere();
+    return 0.5 * ray_colour(Ray{hit_record.point, target - hit_record.point}, world, max_depth - 1);
   }
 
   Vec3 unit_direction = ray.direction().unit_vector();

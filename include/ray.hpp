@@ -48,7 +48,7 @@ OStream &operator<<(OStream &os, Ray const &r)
 double hit_sphere(Vec3 const &sphere_centre, double const sphere_radius, Ray const &ray);
 
 /// Calculate the colour of the ray
-Vec3 ray_colour(Ray const &ray, Hittable const &world);
+Vec3 ray_colour(Ray const &ray, Hittable const &world, std::size_t const max_depth);
 
 
 } // namespace core

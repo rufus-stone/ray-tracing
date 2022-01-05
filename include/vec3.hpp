@@ -6,6 +6,8 @@
 
 #include <spdlog/fmt/ostr.h> // for spdlog pretty printing, etc.
 
+#include "common.hpp"
+
 namespace core
 {
 
@@ -57,6 +59,33 @@ public:
   Vec3 &operator-=(double const t); // Subtract-equals
   Vec3 &operator*=(double const t); // Multiply-equals
   Vec3 &operator/=(double const t); // Divide-equals
+
+
+  inline static Vec3 random()
+  {
+    return Vec3{util::random_double(), util::random_double(), util::random_double()};
+  }
+
+  inline static Vec3 random(double const min, double const max)
+  {
+    return Vec3{util::random_double(min, max), util::random_double(min, max), util::random_double(min, max)};
+  }
+
+  inline static Vec3 random_in_unit_sphere()
+  {
+    while (true)
+    {
+      auto const p = Vec3::random(-1, 1);
+
+      if (p.length_squared() >= 1)
+      {
+        continue;
+      } else
+      {
+        return p;
+      }
+    }
+  }
 };
 
 
@@ -88,14 +117,15 @@ double dot(Vec3 const &lhs, Vec3 const &rhs);
 Vec3 cross(Vec3 const &lhs, Vec3 const &rhs);
 
 
-inline std::string colour_to_string(Vec3 const &v, int const samples_per_pixel)
+inline std::string colour_to_string(Vec3 const &v, std::size_t const samples_per_pixel)
 {
-  // Divide the colour by the number of samples
+  // Divide the colour by the number of samples then gamma-correct for gamma=2.0
+  // by raising the colour to the power of 1/gamma (so to the power of 1/2, which is just a square root)
   double const scale = 1.0 / samples_per_pixel;
 
-  double const r = v.x() * scale;
-  double const g = v.y() * scale;
-  double const b = v.z() * scale;
+  double const r = std::sqrt(v.x() * scale);
+  double const g = std::sqrt(v.y() * scale);
+  double const b = std::sqrt(v.z() * scale);
 
   int const red = static_cast<int>(std::clamp(r, 0.0, 0.999) * 256);
   int const green = static_cast<int>(std::clamp(g, 0.0, 0.999) * 256);

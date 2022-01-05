@@ -30,4 +30,12 @@ inline double random_double()
   return distribution(random_engine);
 }
 
+inline double random_double(double const min, double const max)
+{
+  auto random_engine = std::mt19937{std::random_device{}()};
+
+  std::uniform_real_distribution<double> distribution(min, max);
+  return distribution(random_engine);
+}
+
 } // namespace util

@@ -43,8 +43,9 @@ set_target_properties(
 if(MSVC)
   target_compile_options(${PROJECT_NAME} PRIVATE -W4 -WX)
 else()
-  target_compile_options(${PROJECT_NAME} PRIVATE -Werror -Wall -Wextra
-                                                 -Wold-style-cast -Wpedantic)
+  target_compile_options(
+    ${PROJECT_NAME} PRIVATE -Werror -Wall -Wextra -Wold-style-cast -Wpedantic
+  )# -fsanitize=undefined,address
 endif()
 
 # +--------------+
@@ -93,7 +94,8 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 find_package(spdlog REQUIRED)
 
 # Link in the dependenices
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog
+)# -fsanitize=undefined,address
 
 # +-------+
 # | Tests |

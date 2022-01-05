@@ -22,7 +22,8 @@ int main()
   constexpr double ASPECT_RATIO = 16.0 / 9.0;
   constexpr int IMG_WIDTH = 1024;
   constexpr int IMG_HEIGHT = static_cast<int>(IMG_WIDTH / ASPECT_RATIO);
-  constexpr int SAMPLES_PER_PIXEL = 100; // 100 is sloooww
+  constexpr std::size_t SAMPLES_PER_PIXEL = 20; // 100 is sloooww
+  constexpr std::size_t MAX_DEPTH = 10;         // 50
 
   spdlog::info("Image size: {}x{}", IMG_WIDTH, IMG_HEIGHT);
 
@@ -48,14 +49,14 @@ int main()
     {
       auto pixel_colour = core::Vec3{0, 0, 0};
 
-      for (int s = 0; s < SAMPLES_PER_PIXEL; ++s)
+      for (std::size_t s = 0; s < SAMPLES_PER_PIXEL; ++s)
       {
         double u = (w + util::random_double()) / (IMG_WIDTH - 1);
         double v = (h + util::random_double()) / (IMG_HEIGHT - 1);
 
         auto const ray = camera.get_ray(u, v);
 
-        pixel_colour += core::ray_colour(ray, world);
+        pixel_colour += core::ray_colour(ray, world, MAX_DEPTH);
       }
 
       ss << core::colour_to_string(pixel_colour, SAMPLES_PER_PIXEL) << '\n';
