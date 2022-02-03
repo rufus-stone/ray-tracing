@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.15...3.21)
 
 project(
   raytracer
-  VERSION 0.1.0
+  VERSION 1.0.0
   DESCRIPTION "Following the Ray Tracing in One Weekend tutorial"
   HOMEPAGE_URL "https://github.com/rufus-stone/ray-tracing"
   LANGUAGES CXX)
@@ -23,7 +23,8 @@ set(SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/hittable.cpp
     ${PROJECT_SOURCE_DIR}/src/hittable_list.cpp
     ${PROJECT_SOURCE_DIR}/src/sphere.cpp
-    ${PROJECT_SOURCE_DIR}/src/camera.cpp)
+    ${PROJECT_SOURCE_DIR}/src/camera.cpp
+    ${PROJECT_SOURCE_DIR}/src/renderer.cpp)
 
 # Set source files
 target_sources(${PROJECT_NAME} PRIVATE src/main.cpp ${SOURCE_FILES})
